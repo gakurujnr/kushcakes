@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <title> Your Cart</title>
+    <link rel="icon" type="image/x-icon" href="./images/logo.png">
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo"><img src="./images/logo.png" alt="Cake Shop Logo"></a>
+        <nav class="navigate">
+            <ul>
+                <li><a href="index.html#home">Home</a></li>
+                <li><a href="index.html#about">About Us</a></li>
+                <li><a href="index.html#product">Product</a></li>
+                <li><a href="index.html#service">Service</a></li>
+                <li><a href="index.html#contact">Contact</a></li>
+            </ul>
+        </nav>
+        <div id="menu"><i class="fas fa-bars"></i></div>
+    </header>
+
+    <section id="cart" class="cart my-5">
+        <h1 class="title">Your <span>Cart</span></h1>
+        <div class="cart-content">
+            <table id="cart-table" width="100%">
+                <thead>
+                    <tr>
+                        <td>Remove</td>
+                        <td>Cake Name</td>
+                        <td>Cake Image </td>
+                        <td>Price</td>     
+                        <td>Quantity</td>
+                        <td>Total</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="total">
+                <h3>Total: $<span id="total-price">0</span></h3>
+                <button class="btn" onclick="checkout()">Checkout</button>
+            </div>
+        </div>
+    </section >
+    <footer class="contact" id="contact">
+        <div class="cake-contact">
+            <div class="cake-contact-row">
+                <div class="cake-contact-col">
+                </div>
+                <div class="cake-contact-col">
+                    <form id="formdetails" method="get">
+                        <input type="text" name="name" id="name" placeholder="Please Enter Your Name" required>
+                        <input type="email" name="email" id="email" placeholder="Please Enter Your E-mail" required>
+                        <input type="tel" name="mobile" id="mobile" placeholder="Please Enter Your Mobile No." required>
+                        <textarea rows="8" cols="10" name="msg" placeholder="Give Your Opinion"></textarea>
+                        <button class="btn" style="cursor: pointer;">Submit <i class="fas fa-angle-right" style="cursor: pointer;"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>By&copy;Kush Cakes Vision 2025</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // body..
+            const cartTableBody = document.querySelector('#cart-table tbody');
+            const totalPriceSpan = document.querySelector('#total-price');
+
+
+            // Retrives
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            let totalPrice = 0;
+
+            //Populating the table
+            cart.forEach(item => {
+                const row =  document.createElement('tr');
+
+                row.innerHTML = `
+                            <td><button class="remove-item">Remove</button></td>
+                            <td><img src="${item.image}" alt="${item.name}" style="width: 100px;"></td>
+                            <td>${item.name}</td>
+                            <td>$${item.price}</td>
+                            <td>1</td> <!-- Assuming quantity is always 1 for simplicity -->
+                            <td>$${item.price}</td>
+                        `;
+                        cartTableBody.appendChild(row);
+                        totalPrice += parseFloat(item.price);
+            });
+
+            totalPriceSpan.textContent = totalPrice.toFixed(2);
+
+            // Remove item from cart functionality
+            cartTableBody.addEventListener('click', function(event) {
+                if (event.target.classList.contains('remove-item')) {
+                    const row = event.target.closest('tr');
+                    const price = parseFloat(row.children[5].textContent.substring(1)); // Remove $
+                    
+                    // Remove item from cart
+                    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+                    const itemName = row.children[2].textContent;
+                    cart = cart.filter(item => item.name !== itemName);
+
+                    // Save updated cart
+                    localStorage.setItem('cart', JSON.stringify(cart));
+
+                    // Remove row from table
+                    row.remove();
+
+                    // Update total price
+                    totalPrice -= price;
+                    totalPriceSpan.textContent = totalPrice.toFixed(2);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
